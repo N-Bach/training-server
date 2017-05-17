@@ -1,0 +1,33 @@
+package: .
+import:
+- package: github.com/golang/mock
+  subpackages:
+  - gomock
+- package: github.com/gorilla/context
+  version: ~1.1.0
+- package: github.com/stretchr/testify
+  version: ~1.1.4
+  subpackages:
+  - assert
+  - suite
+- package: go4.org
+  subpackages:
+  - syncutil/singleflight
+- package: golang.org/x/sys
+  subpackages:
+  - unix
+- package: google.golang.org/appengine
+  version: ~1.0.0
+  subpackages:
+  - datastore
+  - log
+  - memcache
+  - socket
+  - urlfetch
+  - user
+- package: gopkg.in/gemnasium/logrus-airbrake-hook.v2
+  version: ~2.1.1
+testImport:
+- package: github.com/bitly/go-hostpool
+- package: github.com/bmizerany/assert
+- package: gopkg.in/check.v1

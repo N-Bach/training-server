@@ -1,0 +1,32 @@
+{
+    "web":{
+        "client_id":"687936443970-lftvnktn3vcd47qp7s9jfcc3rjmjfebu.apps.googleusercontent.com",
+        "project_id":"valued-rigging-167708",
+        "auth_uri":"https://accounts.google.com/o/oauth2/auth",
+        "token_uri":"https://accounts.google.com/o/oauth2/token",
+        "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
+        "client_secret":"2YoeVzWstJk4JDCt6gWHWm4u",
+        "redirect_uris":["http://localhost:3000/callback"],
+        "javascript_origins":["http://localhost:8000"]
+    },
+
+    "URL": "https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fcallback&prompt=consent&response_type=code&client_id=687936443970-lftvnktn3vcd47qp7s9jfcc3rjmjfebu.apps.googleusercontent.com&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar"
+}
+
+ 
+
+code=4%2FD86Kcjti3bvM0Pn4miBVUMORt5jUVO0oSEW6cqwh4ng
+&redirect_uri=https%3A%2F%2Fdevelopers.google.com%2Foauthplayground
+&client_id=407408718192.apps.googleusercontent.com
+&client_secret=************&scope=
+&grant_type=authorization_code
+
+https://accounts.google.com/o/oauth2/token
+?code=4/LQxBqx8GFKXS0aj5KAqvDLEpZhzVMErs9Gw-z3lbMMQ
+&client_id=687936443970-lftvnktn3vcd47qp7s9jfcc3rjmjfebu.apps.googleusercontent.com
+&client_secret=2YoeVzWstJk4JDCt6gWHWm4u
+&grant_type=authorization_code
+&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fcallback
+
+https://accounts.google.com/o/oauth2/token&code=4/jC0YnNzjI2rTdWN2Gwts2HSdLY50V90SJp3xkq9PdmI&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fcallback&client_id=687936443970-lftvnktn3vcd47qp7s9jfcc3rjmjfebu.apps.googleusercontent.com&client_secret=2YoeVzWstJk4JDCt6gWHWm4u&grant_type=authorization_code
+
