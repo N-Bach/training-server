@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"entity"
-	"util"
 )
 
 type IUserRepo interface {
@@ -20,10 +19,14 @@ func (ctrl *Controller) RegisterUser(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	util.PrintStr("Body received")
-	util.PrintObj(option)
+	err := ctrl.UserRepo.Save(&entity.User{
+		Email: option.Email,
+		Password: option.Password,
+	})
+	if err != nil {
+		ResponseInteralError("Cannot save user", err).Excute(w)
+		return
+	}
 
-	
-
-	json.NewEncoder(w).Encode(option.Email)
+	ResponseOk("Saved success").Excute(w)
 } 

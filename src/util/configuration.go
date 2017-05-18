@@ -18,3 +18,6 @@ var AppConfig = &oauth2.Config{
 	},
 	RedirectURL: "http://localhost:3000/callback",
 }
+
+var Secret = []byte("secretcode")
+

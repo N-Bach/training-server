@@ -1,8 +1,10 @@
-hash: 138bea417fb77259ce46a173e6c8c08a92d8070cbf5710e7751687ed7b623d4e
-updated: 2017-05-17T14:42:42.623422763+07:00
+hash: c8f7fb56474771dfb4103e282369a7abf02152b5a3a8e6522d36d3ffe03deda5
+updated: 2017-05-18T09:16:02.455429593+07:00
 imports:
 - name: github.com/cenkalti/backoff
   version: b02f2bbce11d7ea6b97f282ef1771b0fe2f65ef3
+- name: github.com/dgrijalva/jwt-go
+  version: d2709f9f1f31ebcda9651b03077758c1f3a0018c
 - name: github.com/golang/mock
   version: bd3c8e81be01eef76d4b503f5e687d2d1354d2d9
   subpackages:

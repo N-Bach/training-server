@@ -14,11 +14,13 @@ import (
 
 type Controller struct {
 	UserRepo IUserRepo
+	LessonRepo ILessonRepo
 }
 
-func NewController(userRepo IUserRepo) *Controller{
+func NewController(userRepo IUserRepo, lessonRepo ILessonRepo) *Controller{
 	return &Controller{
 		UserRepo: userRepo,
+		LessonRepo: lessonRepo,
 	}
 }
 

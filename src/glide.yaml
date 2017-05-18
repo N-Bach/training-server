@@ -27,6 +27,8 @@ import:
   - user
 - package: gopkg.in/gemnasium/logrus-airbrake-hook.v2
   version: ~2.1.1
+- package: github.com/dgrijalva/jwt-go
+  version: ~3.0.0
 testImport:
 - package: github.com/bitly/go-hostpool
 - package: github.com/bmizerany/assert
