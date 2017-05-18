@@ -20,9 +20,8 @@ func NewLessonRepoRethink(session *rdb.Session) *LessonRepoRethink{
 }
 
 func (r *LessonRepoRethink) Save(lesson *entity.Lesson) error {
-	_, err := rdb.Table(lesson).Insert(lesson).RunWrite(r.Session)
-	if err != nil {
-		return err
-	}
-	return nil
+	// lesson.CreateAt = time.Now()
+	// lesson.UpdateAt = time.Now()
+	_, err := rdb.Table(LESSON_TABLE).Insert(lesson).RunWrite(r.Session)
+	return err
 }

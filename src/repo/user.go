@@ -55,7 +55,6 @@ func (r *UserRepoRethink) Save(user *entity.User) error {
 
 	_, erro := rdb.Table(USER_TABLE).Insert(user).RunWrite(r.Session)
 	if erro != nil {
-		panic(err)
 		return err
 	}
 

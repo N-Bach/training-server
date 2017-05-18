@@ -5,6 +5,6 @@ import (
 )
 
 type TimeStamp struct {
-	CreateAt time.Time `gorethink:"createAt" json:"createAt"`
-	UpdateAt time.Time `gorethink:"createAt" json:"createAt"`
+	CreatedAt time.Time `gorethink:"createdAt" json:"createdAt"`
+	UpdatedAt time.Time `gorethink:"updatedAt" json:"updatedAt"`
 }

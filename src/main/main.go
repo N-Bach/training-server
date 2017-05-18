@@ -25,8 +25,9 @@ func main() {
 	//fetchOneRecord(session)
 
 	userRepo := repo.NewUserRepoRethink(session)
+	lessonRepo := repo.NewLessonRepoRethink(session)
 
-	controller := controller.NewController(userRepo)
+	controller := controller.NewController(userRepo, lessonRepo)
 
 	router := InitRoute(controller)
 
