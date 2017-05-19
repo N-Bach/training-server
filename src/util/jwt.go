@@ -4,6 +4,9 @@ import (
 	"net/http"
 	"strings"
 	"errors"
+	"entity"
+
+	jwt "github.com/dgrijalva/jwt-go"
 )
 
 // FromAuthHeader is a "TokenExtractor" that takes a give request and extracts
@@ -22,3 +25,24 @@ func FromAuthHeader(r *http.Request) (string, error) {
 
 	return authHeaderParts[1], nil
 }
+
+func ParseTokenWithClaims(r *http.Request) (*entity.TokenClaims, error){
+	tokenString, err := FromAuthHeader(r)
+	if err != nil || tokenString == "" {
+		return nil, err
+	}
+	token, err := jwt.ParseWithClaims(tokenString, &entity.TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+        return []byte(Secret), nil
+    })
+	if err != nil {
+		return nil, err
+	}
+
+	claims, ok := token.Claims.(*entity.TokenClaims)
+    if ok && token.Valid {
+        return claims, nil
+    } 
+	
+    return nil, err
+}
+

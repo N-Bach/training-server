@@ -2,6 +2,7 @@ package main
 
 import (
 	"controller"
+	mdw "middleware"
 
 	"github.com/urfave/negroni"
 	"github.com/gorilla/mux"
@@ -9,6 +10,7 @@ import (
 )
 
 func InitRoute(ctrl *controller.Controller) *negroni.Negroni{
+	loggingMdw := mdw.NewLoggingMiddleware()
 	corsMdw := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
 		AllowedMethods: []string{"POST", "GET", "PUT", "POST"},
@@ -29,8 +31,10 @@ func InitRoute(ctrl *controller.Controller) *negroni.Negroni{
 
 	
 	router.Path("/lessons").Methods("POST").HandlerFunc(ctrl.AddLesson)
+	router.Path("/lessons/enroll").Methods("POST").HandlerFunc(ctrl.AddLessonEnroll)
+
 	
-	n := negroni.New(corsMdw)
+	n := negroni.New(loggingMdw, corsMdw)
 	n.UseHandler(router)
 	return n
 }
