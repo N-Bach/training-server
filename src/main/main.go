@@ -26,8 +26,10 @@ func main() {
 
 	userRepo := repo.NewUserRepoRethink(session)
 	lessonRepo := repo.NewLessonRepoRethink(session)
+	feedbackRepo := repo.NewFeedbackRepoRethink(session)
+	reviewRepo := repo.NewReviewRepoRethink(session)
 
-	controller := controller.NewController(userRepo, lessonRepo)
+	controller := controller.NewController(userRepo, lessonRepo, feedbackRepo, reviewRepo)
 
 	router := InitRoute(controller)
 

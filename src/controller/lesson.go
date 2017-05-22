@@ -70,6 +70,12 @@ func (ctrl *Controller) AddLessonEnroll(w http.ResponseWriter, r *http.Request) 
 		ResponseInteralError("Already enrolled", err).Excute(w)
 		return
 	}
+
+	if lesson.AuthorId == claims.Id {
+		ResponseInteralError("Author cannot self-enroll", err).Excute(w)
+		return
+	}
+
 	err = ctrl.LessonRepo.AddEnroll(lesson, claims.Id)
 	if err != nil {
 		ResponseInteralError("Cannot add enroll", err).Excute(w)

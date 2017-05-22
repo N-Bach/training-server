@@ -50,13 +50,9 @@ func (ctrl *Controller) UserSignin(w http.ResponseWriter, r *http.Request) {
 		ResponseOk(token).Excute(w)
 		return
 
-	} else {
-		ResponseOk("Incorrect Password").Excute(w)
-		return
 	}
 	
-}
-
-func (ctrl *Controller) GetResource(w http.ResponseWriter, r *http.Request) {
-
+	ResponseOk("Incorrect Password").Excute(w)
+	return
+	
 }

@@ -27,13 +27,13 @@ func InitRoute(ctrl *controller.Controller) *negroni.Negroni{
 	router.Path("/api/oauth").Methods("POST").HandlerFunc(ctrl.AuthCode)
 	router.Path("/register").Methods("POST").HandlerFunc(ctrl.RegisterUser)
 	router.Path("/signin").Methods("POST").HandlerFunc(ctrl.UserSignin)
-	router.Path("/resource").Methods("GET").HandlerFunc(ctrl.AddLesson)
-
-	
 	router.Path("/lessons").Methods("POST").HandlerFunc(ctrl.AddLesson)
 	router.Path("/lessons/enroll").Methods("POST").HandlerFunc(ctrl.AddLessonEnroll)
 
-	
+	router.Path("/feedback").Methods("POST").HandlerFunc(ctrl.AddFeedback)
+
+	router.Path("/review").Methods("POST").HandlerFunc(ctrl.AddReview)
+
 	n := negroni.New(loggingMdw, corsMdw)
 	n.UseHandler(router)
 	return n
