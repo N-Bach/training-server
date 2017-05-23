@@ -41,7 +41,11 @@ func (r *UserRepoRethink) GetByEmail(email string) (*entity.User, error) {
 	return &user, nil
 }
 
-func (r *UserRepoRethink) Save(user *entity.User) error {
+func (r *UserRepoRethink) Save(user *entity.RequestUser) error {
+	if user.Email == "" || user.Password == "" {
+		return errors.New("Empty field(s)")
+	}
+
 	res, err := rdb.Table(USER_TABLE).
 				GetAllByIndex(EMAIL_INDEX, user.Email).
 				Run(r.Session)
@@ -53,7 +57,12 @@ func (r *UserRepoRethink) Save(user *entity.User) error {
 		return errors.New("User already exist in database")
 	}
 
-	_, erro := rdb.Table(USER_TABLE).Insert(user).RunWrite(r.Session)
+	_, erro := rdb.Table(USER_TABLE).
+				Insert(entity.User{
+					Email: user.Email,
+					Password: user.Password,
+				}).
+				RunWrite(r.Session)
 	if erro != nil {
 		return err
 	}

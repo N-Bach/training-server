@@ -37,11 +37,22 @@ func (r *ReviewRepoRethink) Save(review *reqM.RequestReview) error {
 		return errors.New("Reviewed user does not exist")
 	}
 
-	var reviewedId = entity.User{}
-	cursor.One(&reviewedId)
+	var reviewedUser = entity.User{}
+	cursor.One(&reviewedUser)
 
-	review.For = reviewedId.Id
+	newReview := entity.NewReview(review)
+	// update For field from email to Id
+	review.For = reviewedUser.Id
 
-	_, err = rdb.Table(REVIEW_TABLE).Insert(entity.NewReview(review)).RunWrite(r.Session)
+	// add review data to reviewed user and update
+	if err = reviewedUser.AddOneReview(newReview); err != nil {
+		return err
+	}
+	_, err = rdb.Table(USER_TABLE).Get(reviewedUser.Id).Update(reviewedUser).RunWrite(r.Session)
+	if err != nil {
+		return err
+	}
+
+	_, err = rdb.Table(REVIEW_TABLE).Insert(newReview).RunWrite(r.Session)
 	return err
 }
