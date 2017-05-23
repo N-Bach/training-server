@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"entity"
 	"encoding/json"
 	"net/http"
 	"requestModel"
+	"entity"
 )
 
 type IFeedbackRepo interface {
@@ -19,8 +19,13 @@ func (ctrl *Controller) AddFeedback(w http.ResponseWriter, r *http.Request) {
 		return  
 	}
 
-	feedback := entity.NewFeedBack(&option)
-	err := ctrl.FeedbackRepo.Save(feedback)
+	feedback, err := entity.NewFeedBack(&option)
+	if err != nil {
+		ResponseBadRequest("Cannot create new feedback", err).Excute(w)
+		return
+	}
+
+	err = ctrl.FeedbackRepo.Save(feedback)
 	if err != nil {
 		ResponseInteralError("Cannot save feedback", err).Excute(w)
 		return

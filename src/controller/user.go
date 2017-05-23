@@ -8,7 +8,7 @@ import (
 
 type IUserRepo interface {
 	GetByEmail(email string) (*entity.User, error)
-	Save(user *entity.RequestUser) error
+	Save(user *entity.User) error
 }
 
 func (ctrl *Controller) RegisterUser(w http.ResponseWriter, r *http.Request) {
@@ -19,7 +19,13 @@ func (ctrl *Controller) RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	err := ctrl.UserRepo.Save(&option)
+	user, err := entity.NewUser(&option) 
+	if err != nil {
+		ResponseBadRequest("Cannot create new user",err).Excute(w)
+		return 
+	}
+
+	err = ctrl.UserRepo.Save(user)
 	if err != nil {
 		ResponseInteralError("Cannot save user", err).Excute(w)
 		return

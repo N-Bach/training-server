@@ -28,3 +28,16 @@ func (user *User) AddReview(review *Review) (*User, error) {
 	
 	return user, nil
 }
+
+func NewUser(req *RequestUser) (*User, error) {
+	// TODO 
+	// use regex to check valid email address
+	if req.Email == "" || req.Password == "" {
+		return nil, errors.New("Empty request")
+	}
+
+	return &User{
+		Email: req.Email,
+		Password: req.Password,
+	}, nil	
+}

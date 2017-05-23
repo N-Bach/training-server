@@ -3,7 +3,6 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
-	"fmt"
 )
 
 type IResponse interface {
@@ -85,7 +84,7 @@ func (r *Response) Excute(w http.ResponseWriter) {
 		r.Content = []byte("")
 	}
 	if r.Error != nil {
-		fmt.Println("Error in writing response")
+		//fmt.Println("Error in writing response")
 	}
 
 	w.WriteHeader(r.StatusCode)

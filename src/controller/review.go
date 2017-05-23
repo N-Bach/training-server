@@ -20,7 +20,7 @@ func (ctrl *Controller) AddReview(w http.ResponseWriter, r *http.Request) {
 
 	err := ctrl.ReviewRepo.Save(&option)
 	if err != nil {
-		ResponseInteralError("cannot add review, bug in save", err).Excute(w)
+		ResponseInteralError("cannot save review", err).Excute(w)
 		return 
 	}
 

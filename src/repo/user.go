@@ -41,11 +41,7 @@ func (r *UserRepoRethink) GetByEmail(email string) (*entity.User, error) {
 	return &user, nil
 }
 
-func (r *UserRepoRethink) Save(user *entity.RequestUser) error {
-	if user.Email == "" || user.Password == "" {
-		return errors.New("Empty field(s)")
-	}
-
+func (r *UserRepoRethink) Save(user *entity.User) error {
 	res, err := rdb.Table(USER_TABLE).
 				GetAllByIndex(EMAIL_INDEX, user.Email).
 				Run(r.Session)

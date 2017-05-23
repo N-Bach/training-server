@@ -20,10 +20,8 @@ type mockUserRepo struct {
 func (*mockUserRepo) GetByEmail(email string) (*entity.User, error) {
 	return nil, nil
 }
-func (m *mockUserRepo) Save(user *entity.RequestUser) error {
+func (m *mockUserRepo) Save(user *entity.User) error {
 	// return errors.New("asdasdasdasd")
-
-	
 	args := m.Called(user)
 	return args.Error(0)
 }
@@ -80,7 +78,7 @@ func TestRegisterUser_Test2(t *testing.T) {
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
-	assert.Equal(t, []byte(`"Empty field(s)"`), body)
+	assert.Equal(t, []byte(`"Cannot create new user"`), body)
 }
 
 func TestRegisterUser_Test3(t *testing.T) {
