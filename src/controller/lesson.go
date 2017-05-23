@@ -10,7 +10,7 @@ import (
 
 type ILessonRepo interface {
 	Save(lesson *entity.Lesson) error
-	GetOne(id string) (* entity.Lesson, error)
+	GetOne(id string) (*entity.Lesson, error)
 	AddEnroll(lesson *entity.Lesson, userId string) error
 }
 
@@ -59,7 +59,7 @@ func (ctrl *Controller) AddLessonEnroll(w http.ResponseWriter, r *http.Request) 
 	decoder := json.NewDecoder(r.Body)
 	option := entity.DId{}
 	if err := decoder.Decode(&option); err != nil {
-		ResponseBadRequest("Body does not contain id", err).Excute(w)
+		ResponseBadRequest("Cannot parse from body", err).Excute(w)
 		return
 	}
 	
@@ -73,16 +73,6 @@ func (ctrl *Controller) AddLessonEnroll(w http.ResponseWriter, r *http.Request) 
 	if err !=  nil {
 		util.PrintObj(err)
 		ResponseInteralError("Lesson does not exist", err).Excute(w)
-		return
-	}
-
-	if util.Contains(lesson.Enrolled, claims.Id) {
-		ResponseInteralError("Already enrolled", err).Excute(w)
-		return
-	}
-
-	if lesson.AuthorId == claims.Id {
-		ResponseInteralError("Author cannot self-enroll", err).Excute(w)
 		return
 	}
 

@@ -3,6 +3,8 @@ package repo
 import (
 	rdb "github.com/GoRethink/gorethink"
 	"entity"
+	"util"
+	"errors"
 )
 
 var (
@@ -43,6 +45,16 @@ func (r *LessonRepoRethink) GetOne(id string) (* entity.Lesson, error) {
 }
 
 func (r *LessonRepoRethink) AddEnroll(lesson *entity.Lesson, userId string) error {
+	if util.Contains(lesson.Enrolled, userId) {
+		util.PrintStr("error trong already enrolled")
+		return errors.New("Already enrolled")
+	}
+
+	if lesson.AuthorId == userId {
+		util.PrintStr("error trong self enroll")
+		return errors.New("Author cannot self-enroll")
+	}
+
 	_, err := rdb.Table(LESSON_TABLE).Get(lesson.Id).Update(map[string]interface{}{
     	"enrolled":  append(lesson.Enrolled, userId) ,
 	}).RunWrite(r.Session)

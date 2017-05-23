@@ -2,9 +2,7 @@ package repo
 
 import (
 	rdb "github.com/GoRethink/gorethink"
-	reqM "requestModel"
 	"entity"
-	"errors"
 )
 
 type FeedbackRepoRethink struct {
@@ -22,6 +20,6 @@ func NewFeedbackRepoRethink(session *rdb.Session) *FeedbackRepoRethink {
 }
 
 func (r *FeedbackRepoRethink) Save(feedback *entity.Feedback) error {
-	_, err := rdb.Table(FEEDBACK_TABLE).Insert(object).RunWrite(r.Session)
+	_, err := rdb.Table(FEEDBACK_TABLE).Insert(feedback).RunWrite(r.Session)
 	return err
 }
