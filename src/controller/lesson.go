@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"util"
 	jwt "github.com/dgrijalva/jwt-go"
-	"fmt"
 )
 
 type ILessonRepo interface {
@@ -19,27 +18,38 @@ func (ctrl *Controller) AddLesson(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	option := entity.RequestLesson{}
 	if err := decoder.Decode(&option); err != nil {
-		util.PrintObj(err)
-		ResponseBadRequest("Bad Request", err).Excute(w)
+		ResponseBadRequest("Cannot parse from body", err).Excute(w)
 		return
 	}
 	tokenString, err := util.FromAuthHeader(r)
+	if err != nil {
+		ResponseBadRequest("Request header do not have token",err).Excute(w)
+		return
+	}
+
 	token, err := jwt.ParseWithClaims(tokenString, &entity.TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
-        return []byte("AllYourBase"), nil
+        return []byte(util.Secret), nil
     })
+	if err != nil {
+		ResponseBadRequest("Request do not have token", err).Excute(w)
+		return
+	}
 
 	claims, ok := token.Claims.(*entity.TokenClaims)
-    if ok && token.Valid {
-        fmt.Printf("%v", claims.Id)
-    } else {
-        fmt.Println(err)
-    }
+    if !(ok && token.Valid) {
+		ResponseBadRequest("Invalid claims", err).Excute(w)
+		return
+    } 
 
-	lesson := entity.NewLesson(&option, claims.Id)
+	lesson,err := entity.NewLesson(&option, claims.Id)
+	if err != nil {
+		ResponseBadRequest("Cannot create new lesson", err).Excute(w)
+		return
+	}
+
 	err = ctrl.LessonRepo.Save(lesson)
 	if err != nil {
-		util.PrintObj(err)
-		ResponseInteralError("Cannot insert new lesson", err).Excute(w)
+		ResponseInteralError("Cannot save new lesson", err).Excute(w)
 		return
 	}
 	ResponseOk("Lesson created").Excute(w)

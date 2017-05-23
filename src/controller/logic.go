@@ -18,13 +18,11 @@ func (ctrl *Controller) CreateToken(user *entity.User) (string, error) {
 	// you would like it to contain.
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id": user.Id,
-
 	})
 
 	// Sign and get the complete encoded token as a string using the secret
 	tokenString, err := token.SignedString(util.Secret)
 
-	// fmt.Println(tokenString, err)
 	return tokenString, err
 }
 

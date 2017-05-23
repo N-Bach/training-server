@@ -2,6 +2,7 @@ package entity
 
 import (
 	"time"
+	"errors"
 )
 
 type Lesson struct {
@@ -15,7 +16,17 @@ type Lesson struct {
 	TimeStamp
 }
 
-func NewLesson(req *RequestLesson, authId string) *Lesson {
+func NewLesson(req *RequestLesson, authId string) (*Lesson, error) {
+
+	// validate params
+	if req.Location == "" {
+		return nil, errors.New("Empty location")
+	}
+
+	if req.Description == "" {
+		return nil, errors.New("Empty description")
+	}
+
 	return &Lesson{
 		Date: req.Date,
 		Location: req.Location,
@@ -27,6 +38,6 @@ func NewLesson(req *RequestLesson, authId string) *Lesson {
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
-	}
+	}, nil
 }
 
