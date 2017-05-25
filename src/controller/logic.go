@@ -13,15 +13,16 @@ func (ctrl *Controller) ValidateUser(u entity.User, ru entity.RequestUser) bool 
 	return u.Email == ru.Email && u.Password == ru.Password
 }
 
-func (ctrl *Controller) CreateToken(user *entity.User) (string, error) {
+func (ctrl *Controller) CreateToken(user *entity.User, secret []byte) (string, error) {
 	// Create a new token object, specifying signing method and the claims
 	// you would like it to contain.
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id": user.Id,
+		"email": user.Email,
 	})
 
 	// Sign and get the complete encoded token as a string using the secret
-	tokenString, err := token.SignedString(util.Secret)
+	tokenString, err := token.SignedString(secret)
 
 	return tokenString, err
 }
@@ -35,14 +36,14 @@ func (ctrl *Controller) UserSignin(w http.ResponseWriter, r *http.Request) {
 
 	user,err := ctrl.UserRepo.GetByEmail(option.Email)
 	if err != nil {
-		ResponseInteralError("Something went wrong", err).Excute(w)
+		ResponseInteralError("User doesn not exist", err).Excute(w)
 		return
 	}
 
 	if ctrl.ValidateUser(*user, option) {
-		token, e := ctrl.CreateToken(user)
+		token, e := ctrl.CreateToken(user, util.Secret)
 		if e != nil {
-			ResponseInteralError("cannot create token", e).Excute(w)
+			ResponseInteralError("Cannot create token", e).Excute(w)
 			return
 		}
 		ResponseOk(token).Excute(w)
@@ -50,7 +51,7 @@ func (ctrl *Controller) UserSignin(w http.ResponseWriter, r *http.Request) {
 
 	}
 	
-	ResponseOk("Incorrect Password").Excute(w)
+	ResponseInteralError("Username or password is incorrect",err).Excute(w)
 	return
 	
 }

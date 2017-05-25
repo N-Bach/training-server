@@ -2,7 +2,6 @@ package entity
 
 import (
 	"time"
-	"errors"
 )
 
 type Lesson struct {
@@ -17,14 +16,8 @@ type Lesson struct {
 }
 
 func NewLesson(req *RequestLesson, authId string) (*Lesson, error) {
-
-	// validate params
-	if req.Location == "" {
-		return nil, errors.New("Empty location")
-	}
-
-	if req.Description == "" {
-		return nil, errors.New("Empty description")
+	if err := req.IsValid(); err != nil {
+		return nil, err
 	}
 
 	return &Lesson{

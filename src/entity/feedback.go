@@ -3,7 +3,6 @@ package entity
 import (
 	"time"
 	"requestModel"
-	"errors"
 )
 
 type Feedback struct {
@@ -14,10 +13,10 @@ type Feedback struct {
 	CreatedAt time.Time `gorethink:"createdAt" json:"createdAt"`
 }
 
-func NewFeedBack(req *requestModel.RequestFeedback) (*Feedback,error) {
+func NewFeedBack(req *requestModel.RequestFeedback) (*Feedback, error) {
 
-	if req.AuthorId == "" || req.Title == "" {
-		return nil, errors.New("Empty field(s)")
+	if err :=  req.IsValid(); err != nil {
+		return nil, err
 	}
 
 	return &Feedback{

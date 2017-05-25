@@ -12,11 +12,12 @@ import (
 	"entity"
 	"time"
 	"errors"
-	"fmt"
+	"context"
+	jwt "github.com/dgrijalva/jwt-go"
 )
 
 var (
-	TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA0NGUxYTQwLWU2YTktNDhjNC1iNDlkLTg3OGE0NmZlODRjZiJ9.5C57xtuVpLRqh17nDnaa-8ESQs7Elewsw_OAZ8Ry-0E"
+	TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ndXllbmJhY2gyODEwQGdtYWlsLmNvbSIsImlkIjoiODUxZGExNWEtOTcyYi00MTcxLWIwZGQtZTlhZDcyZTVhMzdmIn0.aD36-kz-61sp-RFqmLl7gO48Zj48cbp-82LiOq2UZJc"
 	INVALID_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA0NGUxYTQwLWU2YTktNDhjNC1iNDlkLTg3OGE0NmZlODRjZiJ9.5C57xtuVpLRqh17nDnaa-8ESQs7Elewsw_OAZ8Ry-0A"
 	URL = "http://localhost:8080/lessons"
 	URL_Enroll = "http://localhost:8080/lessons/enroll"
@@ -49,6 +50,9 @@ func (m *mockLessonRepo) Save(lesson *entity.Lesson) error {
 	
 func (m *mockLessonRepo) GetOne(id string) (*entity.Lesson, error) {
 	args := m.Called(id)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
 	return args.Get(0).(*entity.Lesson), args.Error(1)
 }
 
@@ -76,11 +80,19 @@ func TestAddLesson_Test1(t *testing.T) {
 	result, _ := json.Marshal(rBody)
 	req := httptest.NewRequest("POST", URL, bytes.NewBuffer(result))
 	req.Header.Set("Content-Type","application/json")
-	req.Header.Set("Authorization","Bearer " + TOKEN)
+	// req.Header.Set("Authorization","Bearer " + TOKEN)
+	
+	token := &jwt.Token{}
+	token.Claims = jwt.MapClaims(map[string]interface{}{
+		"id": "abc",
+		"email": "abc@abc.com",
+	})
+
+	ctx := context.WithValue(req.Context(), "user", token)
 	w := httptest.NewRecorder()
 
 	// Excute controller
-	myCtrl.AddLesson(w, req)
+	myCtrl.AddLesson(w, req.WithContext(ctx))
 
 	// Test controller
 	resp := w.Result()
@@ -215,5 +227,61 @@ func TestAddLessonEnroll_Test1(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, []byte(`"Enroll susscessfully"`), body)
+}
+
+func TestAddLessonEnroll_Test2(t *testing.T) {
+	myCtrl := &Controller{}
+	mockRepo := &mockLessonRepo{}
+	mockRepo.On("GetOne", mock.Anything).Return(nil, errors.New("Cannot find lesson"))
+	mockRepo.On("AddEnroll", mock.Anything, mock.Anything).Return(nil)
+	myCtrl.LessonRepo = mockRepo
+
+	// Prepare request
+	rBody := entity.DId{
+		Id: "1",
+	}
+	result, _ := json.Marshal(rBody)
+	req := httptest.NewRequest("POST", URL_Enroll, bytes.NewBuffer(result))
+	req.Header.Set("Content-Type","application/json")
+	// req.Header.Set("Authorization","Bearer " + TOKEN)
+	w := httptest.NewRecorder()
+
+	// Excute controller
+	myCtrl.AddLessonEnroll(w, req)
+
+	// Test controller
+	resp := w.Result()
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	assert.Equal(t, http.StatusInternalServerError, resp.StatusCode)
+	assert.Equal(t, []byte(`"Lesson does not exist"`), body)
+}
+
+func TestAddLessonEnroll_Test3(t *testing.T) {
+	myCtrl := &Controller{}
+	mockRepo := &mockLessonRepo{}
+	mockRepo.On("GetOne", mock.Anything).Return(mockLesson, nil)
+	mockRepo.On("AddEnroll", mock.Anything, mock.Anything).Return(errors.New("cannot enroll"))
+	myCtrl.LessonRepo = mockRepo
+
+	// Prepare request
+	rBody := entity.DId{
+		Id: "1",
+	}
+	result, _ := json.Marshal(rBody)
+	req := httptest.NewRequest("POST", URL_Enroll, bytes.NewBuffer(result))
+	req.Header.Set("Content-Type","application/json")
+	req.Header.Set("Authorization","Bearer " + TOKEN)
+	w := httptest.NewRecorder()
+
+	// Excute controller
+	myCtrl.AddLessonEnroll(w, req)
+
+	// Test controller
+	resp := w.Result()
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	assert.Equal(t, http.StatusInternalServerError, resp.StatusCode)
+	assert.Equal(t, []byte(`"Cannot add enroll"`), body)
 }
 

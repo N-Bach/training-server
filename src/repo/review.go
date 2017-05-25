@@ -40,7 +40,10 @@ func (r *ReviewRepoRethink) Save(review *reqM.RequestReview) error {
 	var reviewedUser = entity.User{}
 	cursor.One(&reviewedUser)
 
-	newReview := entity.NewReview(review)
+	newReview,err := entity.NewReview(review)
+	if err!=nil {
+		return errors.New("not yet")
+	}
 	// update For field from email to Id
 	review.For = reviewedUser.Id
 

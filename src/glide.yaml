@@ -29,6 +29,7 @@ import:
   version: ~2.1.1
 - package: github.com/dgrijalva/jwt-go
   version: ~3.0.0
+- package: github.com/auth0/go-jwt-middleware
 testImport:
 - package: github.com/bitly/go-hostpool
 - package: github.com/bmizerany/assert

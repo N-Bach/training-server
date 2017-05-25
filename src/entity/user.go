@@ -9,6 +9,17 @@ type RequestUser struct {
 	Password string `json:"password"`
 }
 
+func (req *RequestUser) IsValid() error {
+	// TODO 
+	// use regex to check valid email address
+	if req.Email == "" || req.Password == "" {
+		return errors.New("Empty request")
+	}
+
+	return nil
+}
+
+
 type User struct {
 	Id	string	`gorethink:"id,omitempty" json:"id"`
 	Email string `gorethink:"email" json:"email"`
@@ -30,10 +41,9 @@ func (user *User) AddReview(review *Review) (*User, error) {
 }
 
 func NewUser(req *RequestUser) (*User, error) {
-	// TODO 
-	// use regex to check valid email address
-	if req.Email == "" || req.Password == "" {
-		return nil, errors.New("Empty request")
+	
+	if err := req.IsValid(); err != nil {
+		return nil, err
 	}
 
 	return &User{

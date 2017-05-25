@@ -46,3 +46,8 @@ func ParseTokenWithClaims(r *http.Request) (*entity.TokenClaims, error){
     return nil, err
 }
 
+func GetClaimsFromRequest(r *http.Request) jwt.MapClaims{
+	user := r.Context().Value("user")
+	return user.(*jwt.Token).Claims.(jwt.MapClaims)
+}
+

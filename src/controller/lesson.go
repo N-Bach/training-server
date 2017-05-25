@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"encoding/json"
 	"util"
-	jwt "github.com/dgrijalva/jwt-go"
 )
 
 type ILessonRepo interface {
@@ -21,27 +20,10 @@ func (ctrl *Controller) AddLesson(w http.ResponseWriter, r *http.Request) {
 		ResponseBadRequest("Cannot parse from body", err).Excute(w)
 		return
 	}
-	tokenString, err := util.FromAuthHeader(r)
-	if err != nil {
-		ResponseBadRequest("Request header do not have token",err).Excute(w)
-		return
-	}
-
-	token, err := jwt.ParseWithClaims(tokenString, &entity.TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
-        return []byte(util.Secret), nil
-    })
-	if err != nil {
-		ResponseBadRequest("Request do not have token", err).Excute(w)
-		return
-	}
-
-	claims, ok := token.Claims.(*entity.TokenClaims)
-    if !(ok && token.Valid) {
-		ResponseBadRequest("Invalid claims", err).Excute(w)
-		return
-    } 
-
-	lesson,err := entity.NewLesson(&option, claims.Id)
+	
+	claims := util.GetClaimsFromRequest(r)
+	lesson,err := entity.NewLesson(&option, claims["id"].(string))
+	// lesson,err := entity.NewLesson(&option, claims.Id)
 	if err != nil {
 		ResponseBadRequest("Cannot create new lesson", err).Excute(w)
 		return
@@ -65,13 +47,12 @@ func (ctrl *Controller) AddLessonEnroll(w http.ResponseWriter, r *http.Request) 
 	
 	claims, err := util.ParseTokenWithClaims(r)
 	if err != nil {
-		ResponseInteralError("Can not parse token", err).Excute(w)
+		ResponseBadRequest("Can not parse token", err).Excute(w)
 		return
 	}
 	
 	lesson, err := ctrl.LessonRepo.GetOne(option.Id)
 	if err !=  nil {
-		util.PrintObj(err)
 		ResponseInteralError("Lesson does not exist", err).Excute(w)
 		return
 	}

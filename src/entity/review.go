@@ -15,7 +15,11 @@ type Review struct {
 	ReviewerId string `gorethink:"reviewerid" json:"reviewerid"`
 }
 
-func NewReview(req *requestModel.RequestReview) *Review {
+func NewReview(req *requestModel.RequestReview) (*Review, error) {
+	if err := req.IsValid(); err!= nil {
+		return nil, err
+	}
+
 	return &Review {
 		ReviewerId: req.ReviewerId,
 		Title: req.Title,
@@ -26,5 +30,5 @@ func NewReview(req *requestModel.RequestReview) *Review {
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
-	}
+	}, nil 
 }
