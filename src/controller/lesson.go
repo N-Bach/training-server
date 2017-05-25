@@ -22,7 +22,8 @@ func (ctrl *Controller) AddLesson(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	claims := util.GetClaimsFromRequest(r)
-	lesson,err := entity.NewLesson(&option, claims["id"].(string))
+	option.AuthorId = claims["id"].(string)
+	lesson,err := entity.NewLesson(&option)
 	// lesson,err := entity.NewLesson(&option, claims.Id)
 	if err != nil {
 		ResponseBadRequest("Cannot create new lesson", err).Excute(w)
@@ -45,19 +46,14 @@ func (ctrl *Controller) AddLessonEnroll(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	
-	claims, err := util.ParseTokenWithClaims(r)
-	if err != nil {
-		ResponseBadRequest("Can not parse token", err).Excute(w)
-		return
-	}
-	
+	claims := util.GetClaimsFromRequest(r)
 	lesson, err := ctrl.LessonRepo.GetOne(option.Id)
 	if err !=  nil {
 		ResponseInteralError("Lesson does not exist", err).Excute(w)
 		return
 	}
 
-	err = ctrl.LessonRepo.AddEnroll(lesson, claims.Id)
+	err = ctrl.LessonRepo.AddEnroll(lesson, claims["id"].(string))
 	if err != nil {
 		ResponseInteralError("Cannot add enroll", err).Excute(w)
 		return

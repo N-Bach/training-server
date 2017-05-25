@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"requestModel"
 	"entity"
+	"util"
 )
 
 type IFeedbackRepo interface {
@@ -19,6 +20,8 @@ func (ctrl *Controller) AddFeedback(w http.ResponseWriter, r *http.Request) {
 		return  
 	}
 
+	claims := util.GetClaimsFromRequest(r)
+	option.AuthorId = claims["id"].(string)
 	feedback, err := entity.NewFeedBack(&option)
 	if err != nil {
 		ResponseBadRequest("Cannot create new feedback", err).Excute(w)

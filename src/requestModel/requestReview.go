@@ -26,5 +26,9 @@ func (req *RequestReview) IsValid() error {
 		return errors.New("Missing subject")
 	}
 
+	if req.ReviewerId == req.For {
+		return errors.New("Cannot write a review for yourself")
+	}
+
 	return nil
 }

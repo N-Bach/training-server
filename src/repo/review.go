@@ -25,7 +25,7 @@ func NewReviewRepoRethink(session *rdb.Session) *ReviewRepoRethink {
 	}
 }
 
-func (r *ReviewRepoRethink) Save(review *reqM.RequestReview) error {
+func (r *ReviewRepoRethink) Save(review *entity.Review) error {
 	cursor, err :=  rdb.Table(USER_TABLE).
 					GetAllByIndex(EMAIL_INDEX, review.For).
 					Run(r.Session)
@@ -40,15 +40,8 @@ func (r *ReviewRepoRethink) Save(review *reqM.RequestReview) error {
 	var reviewedUser = entity.User{}
 	cursor.One(&reviewedUser)
 
-	newReview,err := entity.NewReview(review)
-	if err!=nil {
-		return errors.New("not yet")
-	}
-	// update For field from email to Id
-	review.For = reviewedUser.Id
-
 	// add review data to reviewed user and update
-	if err = reviewedUser.AddOneReview(newReview); err != nil {
+	if err = reviewedUser.AddOneReview(review); err != nil {
 		return err
 	}
 	_, err = rdb.Table(USER_TABLE).Get(reviewedUser.Id).Update(reviewedUser).RunWrite(r.Session)
@@ -56,6 +49,6 @@ func (r *ReviewRepoRethink) Save(review *reqM.RequestReview) error {
 		return err
 	}
 
-	_, err = rdb.Table(REVIEW_TABLE).Insert(newReview).RunWrite(r.Session)
+	_, err = rdb.Table(REVIEW_TABLE).Insert(review).RunWrite(r.Session)
 	return err
 }

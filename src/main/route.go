@@ -43,14 +43,8 @@ func InitRoute(ctrl *controller.Controller) *negroni.Negroni{
 	})
 
 	router := mux.NewRouter()
-
 	authMdw := negroni.HandlerFunc(mdw.NewJWTMiddleware(util.Secret).HandlerWithNext)
-
-	router.Path("/testauth").Methods("GET").
-		Handler(negroni.New(
-			authMdw,
-    		negroni.Wrap(myHandler),
-		))
+	
 	
 	router.Path("/").Methods("GET").HandlerFunc(ctrl.Index)
 	router.Path("/api/oauth").Methods("POST").HandlerFunc(ctrl.AuthCode)
@@ -59,15 +53,11 @@ func InitRoute(ctrl *controller.Controller) *negroni.Negroni{
 	router.Path("/register").Methods("POST").HandlerFunc(ctrl.RegisterUser)
 	router.Path("/signin").Methods("POST").HandlerFunc(ctrl.UserSignin)
 	
-
-	
-	// Route that need authentication
-	//router.Path("/lessons").Methods("POST").HandlerFunc(jwtMiddleware)
+	// Private Route: need authentication
 	router.Path("/lessons").Methods("POST").Handler(AdaptHandler(ctrl.AddLesson, authMdw))
-
-	router.Path("/lessons/enroll").Methods("POST").HandlerFunc(ctrl.AddLessonEnroll)
-	router.Path("/feedback").Methods("POST").HandlerFunc(ctrl.AddFeedback)
-	router.Path("/review").Methods("POST").HandlerFunc(ctrl.AddReview)
+	router.Path("/lessons/enroll").Methods("POST").Handler(AdaptHandler(ctrl.AddLessonEnroll, authMdw))
+	router.Path("/feedback").Methods("POST").Handler(AdaptHandler(ctrl.AddFeedback, authMdw))
+	router.Path("/review").Methods("POST").Handler(AdaptHandler(ctrl.AddReview, authMdw))
 
 	n := negroni.New(demoMdw, corsMdw)
 	n.UseHandler(router)

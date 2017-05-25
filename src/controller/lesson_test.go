@@ -81,7 +81,6 @@ func TestAddLesson_Test1(t *testing.T) {
 	req := httptest.NewRequest("POST", URL, bytes.NewBuffer(result))
 	req.Header.Set("Content-Type","application/json")
 	// req.Header.Set("Authorization","Bearer " + TOKEN)
-	
 	token := &jwt.Token{}
 	token.Claims = jwt.MapClaims(map[string]interface{}{
 		"id": "abc",
@@ -215,11 +214,16 @@ func TestAddLessonEnroll_Test1(t *testing.T) {
 	result, _ := json.Marshal(rBody)
 	req := httptest.NewRequest("POST", URL_Enroll, bytes.NewBuffer(result))
 	req.Header.Set("Content-Type","application/json")
-	req.Header.Set("Authorization","Bearer " + TOKEN)
+	token := &jwt.Token{}
+	token.Claims = jwt.MapClaims(map[string]interface{}{
+		"id": "abc",
+		"email": "abc@abc.com",
+	})
+	ctx := context.WithValue(req.Context(), "user", token)
 	w := httptest.NewRecorder()
 
 	// Excute controller
-	myCtrl.AddLessonEnroll(w, req)
+	myCtrl.AddLessonEnroll(w, req.WithContext(ctx))
 
 	// Test controller
 	resp := w.Result()

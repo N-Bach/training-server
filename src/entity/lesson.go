@@ -11,11 +11,11 @@ type Lesson struct {
 	Period Period `gorethink:"period" json:"period"`
 	Description string `gorethink:"description" json:"description"`
 	Enrolled []string `gorethink:"enrolled" json:"enrolled"`
-	AuthorId string `gorethink:"authorId,omitempty" json:"authorId"`
+	AuthorId string `gorethink:"authorId" json:"authorId"`
 	TimeStamp
 }
 
-func NewLesson(req *RequestLesson, authId string) (*Lesson, error) {
+func NewLesson(req *RequestLesson) (*Lesson, error) {
 	if err := req.IsValid(); err != nil {
 		return nil, err
 	}
@@ -26,7 +26,7 @@ func NewLesson(req *RequestLesson, authId string) (*Lesson, error) {
 		Period: req.Period,
 		Description: req.Description,
 		Enrolled: []string{},
-		AuthorId: authId,
+		AuthorId: req.AuthorId,
 		TimeStamp: TimeStamp{
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),

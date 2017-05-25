@@ -10,6 +10,7 @@ type RequestLesson struct {
 	Location string `gorethink:"location" json:"location"`
 	Period Period `gorethink:"period" json:"period"`
 	Description string `gorethink:"description" json:"description"`
+	AuthorId string `gorethink:"authorId" json:"authorId"`
 }
 
 func (req *RequestLesson) IsValid() error {

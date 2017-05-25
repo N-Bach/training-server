@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"requestModel"
 	"net/http"
+	"util"
+	"entity"
 )
 
 type IReviewRepo interface {
-	Save(review *requestModel.RequestReview) error
+	Save(review *entity.Review) error
 }
 
 func (ctrl *Controller) AddReview(w http.ResponseWriter, r *http.Request) {
@@ -18,7 +20,15 @@ func (ctrl *Controller) AddReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := ctrl.ReviewRepo.Save(&option)
+	claims:= util.GetClaimsFromRequest(r)
+	option.ReviewerId = claims["id"].(string)
+
+	review, err := entity.NewReview(&option)
+	if err != nil {
+		ResponseInteralError("Cannot create new review", err).Excute(w)
+		return
+	}
+	err = ctrl.ReviewRepo.Save(review)
 	if err != nil {
 		ResponseInteralError("cannot save review", err).Excute(w)
 		return 
